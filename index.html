@@ -3,133 +3,278 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Arcflash Game</title>
+<title>ArcFlash &ndash; Prevent or Perish</title>
 <style>
  body {
   font-family: Arial, sans-serif;
   background-color: #000;
   color: #fff;
-  text-align: center;
   margin: 0;
   padding: 0;
+  text-align: center;
  }
- #gameCanvas {
-  background-color: #111;
+ .scene {
+  display: none;
+  padding: 20px;
+ }
+ .active {
   display: block;
-  margin: 20px auto;
-  border: 2px solid #444;
  }
- #score {
-  font-size: 24px;
+ button {
+  font-size: 18px;
+  padding: 10px 20px;
   margin-top: 10px;
  }
- #startButton {
-  font-size: 20px;
-  padding: 10px 20px;
+ select, input[type="text"] {
+  font-size: 16px;
+ }
+ .hotspot {
+  width: 40px;
+  height: 40px;
+  background: rgba(255,0,0,0.5);
+  position: absolute;
+  border-radius: 50%;
+  cursor: pointer;
+ }
+ #irPanel {
+  position: relative;
+  width: 300px;
+  height: 200px;
+  margin: 20px auto;
+  background: #333;
  }
 </style>
 </head>
 <body>
-<h1>Arcflash</h1>
-<canvas id="gameCanvas" width="600" height="400"></canvas>
-<div id="score">Score: 0</div>
-<button id="startButton">Start Game</button>
+<h1>ArcFlash &ndash; Prevent or Perish</h1>
+<div id="scoreBoard">Score: <span id="score">0</span></div>
+<div id="intro" class="scene active">
+  <p>Welcome to ArcFlash: Prevent or Perish. Your job? Keep the power flowing, the systems safe, and the team alive.</p>
+  <button id="startBtn">Begin Simulation</button>
+</div>
+
+<div id="module1" class="scene">
+  <h2>Module 1: Risk Assessment Roulette</h2>
+  <p>Identify the hazard in this room.</p>
+  <label>Hazard Type:
+    <select id="hazardType">
+      <option value="">Select</option>
+      <option value="arc">Arc Flash</option>
+      <option value="shock">Shock</option>
+      <option value="slip">Slip/Trip</option>
+    </select>
+  </label>
+  <br/>
+  <label>Exposure Level:
+    <select id="exposure">
+      <option value="">Select</option>
+      <option value="low">Low</option>
+      <option value="medium">Medium</option>
+      <option value="high">High</option>
+    </select>
+  </label>
+  <br/>
+  <label>Likelihood:
+    <select id="likelihood">
+      <option value="">Select</option>
+      <option value="unlikely">Unlikely</option>
+      <option value="possible">Possible</option>
+      <option value="likely">Likely</option>
+    </select>
+  </label>
+  <br/>
+  <button id="m1Submit">Submit</button>
+  <div id="m1Feedback"></div>
+</div>
+
+<div id="module2" class="scene">
+  <h2>Module 2: Energized Work Justification</h2>
+  <p>Is energized work justified?</p>
+  <label><input type="radio" name="m2" value="design"> Infeasible to de-energize due to equipment design</label><br>
+  <label><input type="radio" name="m2" value="hazard"> Creates greater hazard</label><br>
+  <label><input type="radio" name="m2" value="noj"> No justification &ndash; de-energize</label><br>
+  <button id="m2Submit">Submit</button>
+  <div id="m2Feedback"></div>
+</div>
+
+<div id="module3" class="scene">
+  <h2>Module 3: Work Permit Wizard</h2>
+  <p>Fill out this simplified permit.</p>
+  <input id="equip" type="text" placeholder="Equipment Details"><br>
+  <input id="volt" type="text" placeholder="Voltage Rating"><br>
+  <input id="hazcat" type="text" placeholder="Hazard Category"><br>
+  <input id="ppe" type="text" placeholder="PPE Required"><br>
+  <input id="signoff" type="text" placeholder="Authorized Sign-Off"><br>
+  <button id="m3Submit">Submit</button>
+  <div id="m3Feedback"></div>
+</div>
+
+<div id="module4" class="scene">
+  <h2>Module 4: Boundary Blitz</h2>
+  <p>Which boundary keeps unqualified persons away from arc flash hazards?</p>
+  <select id="boundarySelect">
+    <option value="">Select</option>
+    <option value="af">Arc Flash Boundary</option>
+    <option value="limited">Limited Approach</option>
+    <option value="restricted">Restricted Approach</option>
+  </select>
+  <br>
+  <button id="m4Submit">Submit</button>
+  <div id="m4Feedback"></div>
+</div>
+
+<div id="module5" class="scene">
+  <h2>Module 5: Infrared Inspection Mission</h2>
+  <p>Click the thermal anomalies.</p>
+  <div id="irPanel">
+    <div class="hotspot" id="hot1" style="top:20px;left:50px"></div>
+    <div class="hotspot" id="hot2" style="top:120px;left:200px"></div>
+    <div class="hotspot" id="hot3" style="top:60px;left:130px"></div>
+  </div>
+  <button id="m5Submit" disabled>Continue</button>
+  <div id="m5Feedback"></div>
+</div>
+
+<div id="module6" class="scene">
+  <h2>Module 6: Torque Trap</h2>
+  <p>Select the correct torque for a 400A breaker connection.</p>
+  <select id="torqueSelect">
+    <option value="">Select</option>
+    <option value="20">20 ft-lbs</option>
+    <option value="50">50 ft-lbs</option>
+    <option value="90">90 ft-lbs</option>
+  </select>
+  <br>
+  <button id="m6Submit">Submit</button>
+  <div id="m6Feedback"></div>
+</div>
+
+<div id="module7" class="scene">
+  <h2>Module 7: Maintenance Schedule Showdown</h2>
+  <p>Match the maintenance interval for a transformer.</p>
+  <select id="maintSelect">
+    <option value="">Select</option>
+    <option value="monthly">Monthly</option>
+    <option value="annual">Annual</option>
+    <option value="5yr">Every 5 Years</option>
+  </select>
+  <br>
+  <button id="m7Submit">Submit</button>
+  <div id="m7Feedback"></div>
+</div>
+
+<div id="final" class="scene">
+  <h2>Build the Safety Program</h2>
+  <p>Select all items to include:</p>
+  <label><input type="checkbox" class="finalItem" value="policy"> Policy Templates</label><br>
+  <label><input type="checkbox" class="finalItem" value="risk"> Risk Categories</label><br>
+  <label><input type="checkbox" class="finalItem" value="maint"> Maintenance Intervals</label><br>
+  <label><input type="checkbox" class="finalItem" value="training"> Training Cycles</label><br>
+  <label><input type="checkbox" class="finalItem" value="docs"> Compliance Documents</label><br>
+  <button id="finalSubmit">Finish</button>
+  <div id="finalFeedback"></div>
+</div>
+
+<div id="end" class="scene">
+  <h2>Simulation Complete</h2>
+  <p>Your OSHA/NFPA Compliance Rating: <span id="rating"></span></p>
+  <button onclick="location.reload()">Play Again</button>
+</div>
+
 <script>
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-const scoreDisplay = document.getElementById('score');
-const startButton = document.getElementById('startButton');
-
-let arcs = [];
 let score = 0;
-let running = false;
-let lastSpawn = 0;
-let spawnInterval = 1000; // ms
+const scenes = ["intro","module1","module2","module3","module4","module5","module6","module7","final","end"];
+let current = 0;
+function show(id){
+  scenes.forEach(s=>document.getElementById(s).classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function next(){
+  current++;
+  show(scenes[current]);
+  document.getElementById('score').textContent = score;
+}
+document.getElementById('startBtn').onclick = next;
 
-class Arc {
-  constructor(x, y, radius, ttl) {
-    this.x = x;
-    this.y = y;
-    this.radius = radius;
-    this.created = Date.now();
-    this.ttl = ttl; // time to live in ms
-    this.alive = true;
+// Module1
+document.getElementById('m1Submit').onclick = () => {
+  const h = document.getElementById('hazardType').value;
+  const e = document.getElementById('exposure').value;
+  const l = document.getElementById('likelihood').value;
+  if(h === 'arc' && e === 'high' && l === 'likely'){
+    score++; document.getElementById('m1Feedback').textContent = 'Correct!';
+  } else {
+    document.getElementById('m1Feedback').textContent = 'Incorrect. Arc flash risk is high and likely here.';
   }
-  draw() {
-    ctx.beginPath();
-    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-    ctx.strokeStyle = '#0ff';
-    ctx.lineWidth = 3;
-    ctx.stroke();
-  }
-  update() {
-    if (Date.now() - this.created > this.ttl) {
-      this.alive = false;
+  next();
+};
+
+// Module2
+document.getElementById('m2Submit').onclick = () => {
+  const val = document.querySelector('input[name="m2"]:checked');
+  if(val && (val.value === 'design' || val.value === 'hazard')){ score++; document.getElementById('m2Feedback').textContent='Correct'; }
+  else { document.getElementById('m2Feedback').textContent='Incorrect'; }
+  next();
+};
+
+// Module3
+document.getElementById('m3Submit').onclick = () => {
+  const ids = ['equip','volt','hazcat','ppe','signoff'];
+  const filled = ids.every(id => document.getElementById(id).value.trim() !== '');
+  if(filled){ score++; document.getElementById('m3Feedback').textContent='Permit complete'; }
+  else { document.getElementById('m3Feedback').textContent='All fields required'; }
+  next();
+};
+
+// Module4
+document.getElementById('m4Submit').onclick = () => {
+  const val = document.getElementById('boundarySelect').value;
+  if(val === 'af'){ score++; document.getElementById('m4Feedback').textContent='Correct'; }
+  else { document.getElementById('m4Feedback').textContent='Incorrect'; }
+  next();
+};
+
+// Module5
+let hot1=false,hot2=false,hot3=false;
+['hot1','hot2','hot3'].forEach(id=>{
+  document.getElementById(id).onclick = (e)=>{
+    e.target.style.background='rgba(0,255,0,0.5)';
+    if(id==='hot1') hot1=true; if(id==='hot2') hot2=true; if(id==='hot3') hot3=true;
+    if(hot1 && hot2 && hot3){
+      document.getElementById('m5Submit').disabled=false;
     }
-  }
-}
-
-function spawnArc() {
-  const radius = 20 + Math.random() * 10;
-  const x = radius + Math.random() * (canvas.width - 2 * radius);
-  const y = radius + Math.random() * (canvas.height - 2 * radius);
-  const ttl = 1500 + Math.random() * 1000;
-  arcs.push(new Arc(x, y, radius, ttl));
-}
-
-function update() {
-  if (!running) return;
-
-  const now = Date.now();
-  if (now - lastSpawn > spawnInterval) {
-    spawnArc();
-    lastSpawn = now;
-    if (spawnInterval > 400) {
-      spawnInterval -= 10; // speed up spawning
-    }
-  }
-
-  arcs.forEach(arc => arc.update());
-  arcs = arcs.filter(arc => arc.alive);
-
-  draw();
-  requestAnimationFrame(update);
-}
-
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  arcs.forEach(arc => arc.draw());
-}
-
-canvas.addEventListener('click', event => {
-  if (!running) return;
-  const rect = canvas.getBoundingClientRect();
-  const x = event.clientX - rect.left;
-  const y = event.clientY - rect.top;
-
-  for (let i = 0; i < arcs.length; i++) {
-    const arc = arcs[i];
-    const dx = x - arc.x;
-    const dy = y - arc.y;
-    if (Math.sqrt(dx * dx + dy * dy) <= arc.radius) {
-      arcs.splice(i, 1);
-      score++;
-      scoreDisplay.textContent = `Score: ${score}`;
-      break;
-    }
-  }
+  };
 });
+document.getElementById('m5Submit').onclick = () => {
+  score++; document.getElementById('m5Feedback').textContent='Anomalies logged';
+  next();
+};
 
-startButton.addEventListener('click', () => {
-  if (running) return;
-  arcs = [];
-  score = 0;
-  scoreDisplay.textContent = 'Score: 0';
-  spawnInterval = 1000;
-  running = true;
-  lastSpawn = Date.now();
-  update();
-});
+// Module6
+document.getElementById('m6Submit').onclick = () => {
+  const val = document.getElementById('torqueSelect').value;
+  if(val === '50'){ score++; document.getElementById('m6Feedback').textContent='Correct'; }
+  else { document.getElementById('m6Feedback').textContent='Incorrect'; }
+  next();
+};
+
+// Module7
+document.getElementById('m7Submit').onclick = () => {
+  const val = document.getElementById('maintSelect').value;
+  if(val === 'annual'){ score++; document.getElementById('m7Feedback').textContent='Correct'; }
+  else { document.getElementById('m7Feedback').textContent='Incorrect'; }
+  next();
+};
+
+// Final Boss
+document.getElementById('finalSubmit').onclick = () => {
+  const items = document.querySelectorAll('.finalItem:checked');
+  if(items.length === 5){ score++; document.getElementById('finalFeedback').textContent='Program complete'; }
+  else { document.getElementById('finalFeedback').textContent='Missing items'; }
+  const rating = Math.round((score/8)*100) + '%';
+  document.getElementById('rating').textContent = rating;
+  next();
+};
 </script>
 </body>
 </html>
