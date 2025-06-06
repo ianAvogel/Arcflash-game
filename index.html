@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arcflash Game</title>
+<style>
+ body {
+  font-family: Arial, sans-serif;
+  background-color: #000;
+  color: #fff;
+  text-align: center;
+  margin: 0;
+  padding: 0;
+ }
+ #gameCanvas {
+  background-color: #111;
+  display: block;
+  margin: 20px auto;
+  border: 2px solid #444;
+ }
+ #score {
+  font-size: 24px;
+  margin-top: 10px;
+ }
+ #startButton {
+  font-size: 20px;
+  padding: 10px 20px;
+ }
+</style>
+</head>
+<body>
+<h1>Arcflash</h1>
+<canvas id="gameCanvas" width="600" height="400"></canvas>
+<div id="score">Score: 0</div>
+<button id="startButton">Start Game</button>
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const scoreDisplay = document.getElementById('score');
+const startButton = document.getElementById('startButton');
+
+let arcs = [];
+let score = 0;
+let running = false;
+let lastSpawn = 0;
+let spawnInterval = 1000; // ms
+
+class Arc {
+  constructor(x, y, radius, ttl) {
+    this.x = x;
+    this.y = y;
+    this.radius = radius;
+    this.created = Date.now();
+    this.ttl = ttl; // time to live in ms
+    this.alive = true;
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+    ctx.strokeStyle = '#0ff';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+  }
+  update() {
+    if (Date.now() - this.created > this.ttl) {
+      this.alive = false;
+    }
+  }
+}
+
+function spawnArc() {
+  const radius = 20 + Math.random() * 10;
+  const x = radius + Math.random() * (canvas.width - 2 * radius);
+  const y = radius + Math.random() * (canvas.height - 2 * radius);
+  const ttl = 1500 + Math.random() * 1000;
+  arcs.push(new Arc(x, y, radius, ttl));
+}
+
+function update() {
+  if (!running) return;
+
+  const now = Date.now();
+  if (now - lastSpawn > spawnInterval) {
+    spawnArc();
+    lastSpawn = now;
+    if (spawnInterval > 400) {
+      spawnInterval -= 10; // speed up spawning
+    }
+  }
+
+  arcs.forEach(arc => arc.update());
+  arcs = arcs.filter(arc => arc.alive);
+
+  draw();
+  requestAnimationFrame(update);
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  arcs.forEach(arc => arc.draw());
+}
+
+canvas.addEventListener('click', event => {
+  if (!running) return;
+  const rect = canvas.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+
+  for (let i = 0; i < arcs.length; i++) {
+    const arc = arcs[i];
+    const dx = x - arc.x;
+    const dy = y - arc.y;
+    if (Math.sqrt(dx * dx + dy * dy) <= arc.radius) {
+      arcs.splice(i, 1);
+      score++;
+      scoreDisplay.textContent = `Score: ${score}`;
+      break;
+    }
+  }
+});
+
+startButton.addEventListener('click', () => {
+  if (running) return;
+  arcs = [];
+  score = 0;
+  scoreDisplay.textContent = 'Score: 0';
+  spawnInterval = 1000;
+  running = true;
+  lastSpawn = Date.now();
+  update();
+});
+</script>
+</body>
+</html>
